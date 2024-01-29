@@ -1,10 +1,13 @@
 const express = require('express')
 const app = express()
+const cors = require('cors');
 
 require('dotenv').config()
 
-const connect = require ('./config/db');
+const connect = require('./config/db');
 connect();
+app.use(cors());
+app.use(cors('https://localhost:3000'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
