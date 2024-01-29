@@ -6,7 +6,11 @@ import { toast } from 'react-toastify';
 
 const Create = () => {
     const navigate = useNavigate();
-    const [newBlog, setNewBlog] = useState({});
+    const [newBlog, setNewBlog] = useState({
+        tags: [],
+        currentTag: '',
+        filteredTags: [],
+    });
 
     const handleChange = (e) => {
         setNewBlog({
@@ -35,6 +39,23 @@ const Create = () => {
         } catch (error) {
             console.error('Error creating blog:', error);
         }
+    };
+
+    const handleTagInput = (e) => {
+        if (e.key === ' ' && newBlog.currentTag.trim() !== '') {
+            setNewBlog({
+                ...newBlog,
+                tags: [...newBlog.tags, newBlog.currentTag.trim()],
+                currentTag: '', // Reset current tag after adding it
+            });
+        }
+    };
+
+    const handleTagDelete = (tagToDelete) => {
+        setNewBlog({
+            ...newBlog,
+            tags: newBlog.tags.filter(tag => tag !== tagToDelete),
+        });
     };
 
     return (
@@ -93,13 +114,20 @@ const Create = () => {
 
                 <Form.Group className="mb-3" controlId="formTags">
                     <Form.Label>Tags</Form.Label>
+                    <div>
+                        {newBlog.tags.map((tag, index) => (
+                            <Button key={index} variant="outline-primary" className="me-2 mb-2" onClick={() => handleTagDelete(tag)}>
+                                {tag}
+                            </Button>
+                        ))}
+                    </div>
                     <Form.Control
                         type="text"
-                        name="tags"
-                        value={newBlog.tags}
+                        name="currentTag"
+                        value={newBlog.currentTag}
                         onChange={handleChange}
-                        required
-                        placeholder="Enter tags"
+                        onKeyDown={handleTagInput}
+                        placeholder="Enter tags and press Enter"
                     />
                 </Form.Group>
 

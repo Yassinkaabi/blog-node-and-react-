@@ -22,7 +22,11 @@ const Blogs = () => {
 
     const HandleDelete = async (id) => {
         try {
-            // Send DELETE request
+            const confirmed = window.confirm('Are you sure you want to delete this post?');
+            if (!confirmed) {
+                return;
+            }           
+             // Send DELETE request
             await axios.delete(`http://localhost:5000/api/blog/posts/${id}`);
 
             // Fetch updated data after deletion
@@ -61,25 +65,37 @@ const Blogs = () => {
             <ul className="list-group">
                 {blogs
                     .slice(pagesVisited, pagesVisited + productsPerPage)
-                        .map((blog, index) => (
-                            <li key={blog._id} className="list-group-item">
-                                <div className='d-flex' style={{ alignItems: 'center', gap: '30px' }}>
-                                    <strong className="mb-1">{index + 1}</strong>
-                                    <div>
-                                        <h3 className="mb-2">{blog.title}</h3>
-                                        <p className="mb-1">{blog.content}</p>
-                                        <p className="text-muted">Author: {blog.author}</p>
-                                        <div style={{ display: 'flex', gap: '4px' }}>
-                                            <Link className='btn btn-success' to={`/posts/update/${blog._id}`}>Update</Link>
-                                            <button className='btn btn-danger' onClick={() => HandleDelete(blog._id)}>
-                                                Delete
-                                            </button>
+                    .map((blog, index) => (
+                        <li key={blog._id} className="list-group-item">
+                            <div className='d-flex' style={{ alignItems: 'center', gap: '30px' }}>
+                                <strong className="mb-1">{index + 1}</strong>
+                                <div>
+                                    <h3 className="mb-2">{blog.title}</h3>
+                                    <p className="mb-1">{blog.content}</p>
+                                    <p className="text-muted">Author: {blog.author}</p>
+                                    <p className="text-muted">Slug: {blog.slug}</p>
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                        <p className="text-muted">Tags:</p>
+                                        <div className="tag-container" style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                                            {blog.tags.map((tag, tagIndex) => (
+                                                <div variant="outline-primary" className="btn btn-light me-2 mb-2" key={tagIndex}>
+                                                    {tag}
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
+                                    {/* <p className="text-muted">Tags: {blog.tags.join(', ')}</p> */}
+                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                        <Link className='btn btn-success' to={`/posts/update/${blog._id}`}>Update</Link>
+                                        <button className='btn btn-danger' onClick={() => HandleDelete(blog._id)}>
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
-                                {/* Add other blog details as needed */}
-                            </li>
-                        ))}
+                            </div>
+                            {/* Add other blog details as needed */}
+                        </li>
+                    ))}
             </ul>
             <div style={{ marginTop: '20px', paddingBottom: '10px', display: 'flex', justifyContent: 'center' }}>
                 {/* Pagination component */}
