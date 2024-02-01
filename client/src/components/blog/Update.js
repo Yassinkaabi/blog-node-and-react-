@@ -7,7 +7,11 @@ import { message } from 'antd'
 const Update = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [updatedBlog, setUpdatedBlog] = useState({});
+    const [updatedBlog, setUpdatedBlog] = useState({
+        tags: [],
+        currentTag: '',
+        filteredTags: [],
+    });
 
     useEffect(() => {
         // Fetch the details of the blog post with the specified id and populate the form
@@ -23,12 +27,7 @@ const Update = () => {
         fetchBlogDetails();
     }, [id]);
 
-    const handleChange = (e) => {
-        setUpdatedBlog({
-            ...updatedBlog,
-            [e.target.name]: e.target.value,
-        });
-    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -42,6 +41,37 @@ const Update = () => {
         message.success("Blog updated Successfully!")
     };
 
+    const handleChange = (e) => {
+        setUpdatedBlog({
+            ...updatedBlog,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleTagInput = (e) => {
+        if (e.key === ' ' && updatedBlog.currentTag.trim() !== '') {
+            if (!updatedBlog.tags.includes(updatedBlog.currentTag.trim())) {
+                setUpdatedBlog({
+                    ...updatedBlog,
+                    tags: [...updatedBlog.tags, updatedBlog.currentTag.trim()],
+                    currentTag: '', // Reset current tag after adding it
+                });
+            } else {
+                setUpdatedBlog({
+                    ...updatedBlog,
+                    currentTag: '',
+                });
+                message.error('Tag already exists');
+            }
+        }
+    };
+
+    const handleTagDelete = (tagToDelete) => {
+        setUpdatedBlog({
+            ...updatedBlog,
+            tags: updatedBlog.tags.filter(tag => tag !== tagToDelete),
+        });
+    };
     return (
         <div className="container mt-5">
             <h1 className="mb-4">Update Blog</h1>
@@ -61,7 +91,7 @@ const Update = () => {
                 <Form.Group className="mb-3" controlId="formContent">
                     <Form.Label>Content</Form.Label>
                     <Form.Control
-                        as="textarea" 
+                        as="textarea"
                         rows={3}
                         type="text"
                         name="content"
@@ -95,16 +125,22 @@ const Update = () => {
                         placeholder="Enter slug"
                     />
                 </Form.Group>
-
                 <Form.Group className="mb-3" controlId="formTags">
                     <Form.Label>Tags</Form.Label>
+                    <div>
+                        {updatedBlog.tags.map((tag, index) => (
+                            <Button key={index} variant="outline-primary" className="me-2 mb-2" onClick={() => handleTagDelete(tag)}>
+                                {tag}
+                            </Button>
+                        ))}
+                    </div>
                     <Form.Control
                         type="text"
-                        name="tags"
-                        value={updatedBlog.tags || ''}
+                        name="currentTag"
+                        value={updatedBlog.currentTag}
                         onChange={handleChange}
-                        required
-                        placeholder="Enter tags"
+                        onKeyDown={handleTagInput}
+                        placeholder="Enter tags and press Space"
                     />
                 </Form.Group>
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify';
+import { message } from 'antd'
 
 const Create = () => {
     const navigate = useNavigate();
@@ -43,11 +44,19 @@ const Create = () => {
 
     const handleTagInput = (e) => {
         if (e.key === ' ' && newBlog.currentTag.trim() !== '') {
-            setNewBlog({
-                ...newBlog,
-                tags: [...newBlog.tags, newBlog.currentTag.trim()],
-                currentTag: '', // Reset current tag after adding it
-            });
+            if (!newBlog.tags.includes(newBlog.currentTag.trim())) {
+                setNewBlog({
+                    ...newBlog,
+                    tags: [...newBlog.tags, newBlog.currentTag.trim()],
+                    currentTag: '', // Reset current tag after adding it
+                });
+            } else {
+                setNewBlog({
+                    ...newBlog,
+                    currentTag: '',
+                });
+                message.error('Tag already exists');
+            }
         }
     };
 
@@ -60,7 +69,6 @@ const Create = () => {
 
     return (
         <div className="container mt-5">
-            {/* Same as */}
             <h1 className="mb-4">Create Blog</h1>
             <Form>
                 <Form.Group className="mb-3" controlId="formTitle">
@@ -127,7 +135,7 @@ const Create = () => {
                         value={newBlog.currentTag}
                         onChange={handleChange}
                         onKeyDown={handleTagInput}
-                        placeholder="Enter tags and press Enter"
+                        placeholder="Enter tags and press Space"
                     />
                 </Form.Group>
 

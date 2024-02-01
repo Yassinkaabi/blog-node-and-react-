@@ -25,8 +25,8 @@ const Blogs = () => {
             const confirmed = window.confirm('Are you sure you want to delete this post?');
             if (!confirmed) {
                 return;
-            }           
-             // Send DELETE request
+            }
+            // Send DELETE request
             await axios.delete(`http://localhost:5000/api/blog/posts/${id}`);
 
             // Fetch updated data after deletion
@@ -66,34 +66,45 @@ const Blogs = () => {
                 {blogs
                     .slice(pagesVisited, pagesVisited + productsPerPage)
                     .map((blog, index) => (
-                        <li key={blog._id} className="list-group-item">
+                        <li key={blog._id} className="list-group-item" style={{ display: 'flex', justifyContent: 'space-between' }} >
                             <div className='d-flex' style={{ alignItems: 'center', gap: '30px' }}>
                                 <strong className="mb-1">{index + 1}</strong>
                                 <div>
-                                    <h3 className="mb-2">{blog.title}</h3>
-                                    <p className="mb-1">{blog.content}</p>
-                                    <p className="text-muted">Author: {blog.author}</p>
-                                    <p className="text-muted">Slug: {blog.slug}</p>
+                                    <p className="mb-1"><span style={{ fontSize: '18px', fontWeight: '600' }}>Title :</span> {blog.title}</p>
+                                    <p className="mb-1"><span style={{ fontSize: '18px', fontWeight: '600' }}>Content :</span> {blog.content}</p>
+                                    <p className="mb-1"><span style={{ fontSize: '18px', fontWeight: '600' }}>Title :</span> {blog.author}</p>
+                                    <p className="mb-1"><span style={{ fontSize: '18px', fontWeight: '600' }}>Slug: </span> {blog.slug}</p>
                                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                                        <p className="text-muted">Tags:</p>
-                                        <div className="tag-container" style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                                            {blog.tags.map((tag, tagIndex) => (
-                                                <div variant="outline-primary" className="btn btn-light me-2 mb-2" key={tagIndex}>
-                                                    {tag}
+                                        {blog.tags && blog.tags.length > 0 ? (
+                                            <>
+                                                <p className="mb-2"><span style={{ fontSize: '18px', fontWeight: '600' }}>Tags:</span></p>
+                                                <div className="tag-container" style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                                                    {blog.tags.map((tag, tagIndex) => (
+                                                        <div variant="outline-primary" className="btn btn-light me-2 mb-2" key={tagIndex}>
+                                                            #{tag}
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
-                                        </div>
+                                            </>
+                                        ) : (
+                                            <p style={{ display: 'none' }}>No tags available</p>
+                                        )}
                                     </div>
-                                    {/* <p className="text-muted">Tags: {blog.tags.join(', ')}</p> */}
                                     <div style={{ display: 'flex', gap: '4px' }}>
                                         <Link className='btn btn-success' to={`/posts/update/${blog._id}`}>Update</Link>
-                                        <button className='btn btn-danger' onClick={() => HandleDelete(blog._id)}>
-                                            Delete
-                                        </button>
                                     </div>
                                 </div>
                             </div>
                             {/* Add other blog details as needed */}
+                            <div>
+                                <button
+                                    style={{ fontSize: '10px' }}
+                                    className='btn btn-danger'
+                                    onClick={() => HandleDelete(blog._id)}
+                                >
+                                    X
+                                </button>
+                            </div>
                         </li>
                     ))}
             </ul>
@@ -114,9 +125,9 @@ const Blogs = () => {
                 </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <p style={{ padding: '8px', backgroundColor: '#e9ecef', color: '#222' }}>Page {pageNumber + 1}</p>
+                <p style={{ padding: '8px', backgroundColor: '#e9ecef', color: '#222', borderRadius: '4px' }}>Page {pageNumber + 1}</p>
             </div>
-        </div>
+        </div >
     )
 }
 
